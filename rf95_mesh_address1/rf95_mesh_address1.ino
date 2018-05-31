@@ -37,7 +37,7 @@ Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 
 // Class to manage message delivery and receipt, using the driver declared above
-RHMesh manager(driver, MESH3_ADDRESS);
+RHMesh manager(driver, MESH8_ADDRESS);
 int isTurned = 0;
 
 void setup() 
@@ -51,7 +51,7 @@ void setup()
   // Defaults after init are 434.0MHz, 0.05MHz AFC pull-in, modulation FSK_Rb2_4Fd36
 }
 
-uint8_t data[] = "Hello World!";
+uint8_t data[] = "we are 8";
 uint8_t back[] = "And hello back to you from mesh 8";
 // Dont put this on the stack:
 uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
@@ -60,13 +60,15 @@ void loop()
 {
     uint8_t len = sizeof(buf);
     uint8_t from;
-
       memset(buf, 0, len);
-      if((manager.recvfromAck(buf, &len, &from))||(true))
+      if((manager.recvfromAck(buf, &len, &from)))
       {
           Serial.print("got message from : 0x");
           Serial.print(from, HEX);
           Serial.print(": ");
+          if (strcmp("we are 7",(char*)buf)==0){
+          Serial.println("we are recieving");           
+            }
           Serial.println((char*)buf);
           
           // Send a reply back to the originator router
@@ -81,13 +83,14 @@ void loop()
             }
             
           }
-    if (isTouch()==1) {
+   /* if (isTouch()==1) {
     Serial.println("TOUCHED");    
     sendMessage('1',len,from);
     }
     else {
-    Serial.println("not touched");    
-    }  
+    Serial.println("not touched");  
+    delay (500);  
+    }*/  
 
           
 
