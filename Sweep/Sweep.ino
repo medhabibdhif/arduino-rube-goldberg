@@ -25,7 +25,7 @@ isTurned=1;
   }  
 else {
     Serial.println("already turned");// goes from 0 degrees to 180 degrees  
-     delay(20000); 
+     delay(2000); 
   }
   
 }

@@ -51,8 +51,8 @@ void setup()
   // Defaults after init are 434.0MHz, 0.05MHz AFC pull-in, modulation FSK_Rb2_4Fd36
 }
 
-uint8_t data[] = "we are 8";
-uint8_t back[] = "And hello back to you from mesh 8";
+uint8_t data[] = "we are 8"; //message for next group
+uint8_t back[] = "And hello back to you from mesh 8"; //message as ACK
 // Dont put this on the stack:
 uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
 
@@ -61,7 +61,7 @@ void loop()
     uint8_t len = sizeof(buf);
     uint8_t from;
       memset(buf, 0, len);
-      if((manager.recvfromAck(buf, &len, &from)))
+      if((manager.recvfromAck(buf, &len, &from))||true&&(isTurned==0))
       {
           Serial.print("got message from : 0x");
           Serial.print(from, HEX);
@@ -74,23 +74,20 @@ void loop()
           // Send a reply back to the originator router
           if(manager.sendtoWait(back, sizeof(back), from) != RH_ROUTER_ERROR_NONE)
           Serial.println("sendtoWait failed");
-          if (isTurned==0){
           turn();
-          isTurned=1;
-            }  
-          else {
-              Serial.println("already turned");// goes from 0 degrees to 180 degrees  
-            }
             
           }
-   /* if (isTouch()==1) {
+        else {
+            Serial.println("already turned");// goes from 0 degrees to 180 degrees  
+          }
+    if (isTouch()==1) {
     Serial.println("TOUCHED");    
     sendMessage('1',len,from);
     }
     else {
     Serial.println("not touched");  
-    delay (500);  
-    }*/  
+    delay (100);  
+    }  
 
           
 
@@ -133,6 +130,7 @@ void loop()
     }*/
 
 int isTouch(){  
+  
   int ctsValue = digitalRead(ctsPin);
   if (ctsValue == HIGH){
     //digitalWrite(ledPin, HIGH);
@@ -180,7 +178,7 @@ void turn() {
   int i =0;
   int j= 0;
   int pos = 0;    // variable to store the servo position
-  
+  isTurned=1;
    digitalWrite(9, HIGH); 
    for (i ;i <= 1; i += 1) { 
     Serial.println(i);// goes from 0 degrees to 180 degrees
