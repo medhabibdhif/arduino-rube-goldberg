@@ -6,6 +6,7 @@
 // Hint: you can simulate other network topologies by setting the 
 // RH_TEST_NETWORK define in RHRouter.h
 #include <SoftwareSerial.h>
+#include <Ultrasonic.h>
 #include <RH_RF95.h>
 #include <RHMesh.h>
 #include <Servo.h>
@@ -27,12 +28,12 @@
 #define MESH8_ADDRESS 8
 #define MESH9_ADDRESS 9
 
-#define ctsPin 3 // Pin for capactitive touch sensor
+//#define ctsPin 3 // Pin for capactitive touch sensor
 
 // Singleton instance of the radio driver
 SoftwareSerial ss(A5, A4);
 RH_RF95 driver(ss);
-
+Ultrasonic ultrasonic(3);
 Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 
@@ -44,7 +45,6 @@ void setup()
 {
   Serial.begin(9600);
   pinMode(9, OUTPUT); //Sweep
-  pinMode(ctsPin, INPUT); //Touch
 
   if (!manager.init())
     Serial.println("init failed");
@@ -80,13 +80,13 @@ void loop()
         else {
             Serial.println("already turned");// goes from 0 degrees to 180 degrees  
           }
-    if (isTouch()==1) {
+    if (isNear()==1) {
     Serial.println("TOUCHED");    
     sendMessage('1',len,from);
     }
     else {
     Serial.println("not touched");  
-    delay (100);  
+    delay (500);  
     }  
 
           
@@ -129,7 +129,7 @@ void loop()
         addr = 0;     
     }*/
 
-int isTouch(){  
+/*int isTouch(){  
   
   int ctsValue = digitalRead(ctsPin);
   if (ctsValue == HIGH){
@@ -141,6 +141,17 @@ int isTouch(){
     return 0;
   } 
   
+  }*/
+
+int isNear(){
+  Serial.print("Distance in CM: ");
+  int k =ultrasonic.distanceRead();
+  Serial.println(k);
+  if (k<4) {
+      Serial.print("It's near !!");
+    return 1;
+    }
+    return 0 ;
   }
 
 void sendMessage (char addr,uint8_t len,uint8_t from) {
@@ -177,17 +188,17 @@ void sendMessage (char addr,uint8_t len,uint8_t from) {
 void turn() {
   int i =0;
   int j= 0;
-  int pos = 0;    // variable to store the servo position
+  int pos = 180;    // variable to store the servo position
   isTurned=1;
    digitalWrite(9, HIGH); 
    for (i ;i <= 1; i += 1) { 
     Serial.println(i);// goes from 0 degrees to 180 degrees
-    for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    for (pos = 180; pos >= 0; pos -= 1) { // goes from 0 degrees to 180 degrees
       // in steps of 1 degree
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(5);                       // waits 15ms for the servo to reach the position
     }
-    for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    for (pos = 0; pos <= 180; pos += 1) { // goes from 180 degrees to 0 degrees
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(5);                       // waits 15ms for the servo to reach the position
     }

@@ -40,7 +40,7 @@
 
 #include "Ultrasonic.h"
 
-Ultrasonic ultrasonic(11);
+Ultrasonic ultrasonic(3);
 void setup()
 {
 	Serial.begin(9600);
@@ -64,7 +64,7 @@ void measure () {
   RangeInCentimeters = ultrasonic.MeasureInCentimeters(); // two measurements should keep an interval
   Serial.print(RangeInCentimeters);//0~400cm
   Serial.println(" cm");
-  delay(2000);
+  delay(200);
 
   
   }

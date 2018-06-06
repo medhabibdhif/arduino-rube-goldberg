@@ -15,7 +15,7 @@ void loop() {
   else {
     Serial.println("not touched");    
     }  
-  delay(1000);
+  delay(500);
 
   
 }
