@@ -61,28 +61,30 @@ void loop()
     uint8_t len = sizeof(buf);
     uint8_t from;
       memset(buf, 0, len);
-      if((manager.recvfromAck(buf, &len, &from))||true&&(isTurned==0))
+      if((manager.recvfromAck(buf, &len, &from))&&(isTurned==0))
       {
           Serial.print("got message from : 0x");
           Serial.print(from, HEX);
           Serial.print(": ");
           if (strcmp("we are 7",(char*)buf)==0){
           Serial.println("we are recieving");           
+          turn();
             }
           Serial.println((char*)buf);
           
           // Send a reply back to the originator router
           if(manager.sendtoWait(back, sizeof(back), from) != RH_ROUTER_ERROR_NONE)
           Serial.println("sendtoWait failed");
-          turn();
             
           }
         else {
-            Serial.println("already turned");// goes from 0 degrees to 180 degrees  
+            Serial.println("already turned: ");// goes from 0 degrees to 180 degrees
+            Serial.println(isTurned);// goes from 0 degrees to 180 degrees  
+
           }
     if (isNear()==1) {
     Serial.println("TOUCHED");    
-    sendMessage('1',len,from);
+    sendMessage('9',len,from);
     }
     else {
     Serial.println("not touched");  
